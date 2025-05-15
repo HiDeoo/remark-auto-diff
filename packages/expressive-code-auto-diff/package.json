@@ -1,0 +1,53 @@
+{
+  "name": "expressive-code-auto-diff",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "// TODO(HiDeoo)",
+  "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "lint": "eslint . --cache --max-warnings=0",
+    "prepublishOnly": "pnpm build"
+  },
+  "dependencies": {
+    "git-diff": "^2.0.6"
+  },
+  "devDependencies": {
+    "@types/git-diff": "^2.0.7",
+    "tsdown": "^0.11.9"
+  },
+  "peerDependencies": {
+    "@expressive-code/core": ">=0.38.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.11.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "// TODO(HiDeoo)"
+  ],
+  "homepage": "https://github.com/HiDeoo/expressive-code-auto-diff",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/expressive-code-auto-diff.git",
+    "directory": "packages/expressive-code-auto-diff"
+  },
+  "bugs": "https://github.com/HiDeoo/expressive-code-auto-diff/issues"
+}
