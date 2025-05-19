@@ -1,29 +1,29 @@
 {
-  "name": "expressive-code-auto-diff",
+  "name": "remark-expressive-code-auto-diff",
   "version": "0.0.1",
   "license": "MIT",
   "description": "// TODO(HiDeoo)",
   "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
-    "types": "./dist/index.d.ts",
-    "default": "./dist/index.js"
+    ".": "./index.ts",
+    "./package.json": "./package.json"
   },
   "scripts": {
+    "// TODO(HiDeoo) ": "// TODO(HiDeoo) ",
     "dev": "tsdown --watch",
     "build": "tsdown",
     "test": "vitest",
-    "lint": "eslint . --cache --max-warnings=0",
-    "prepublishOnly": "pnpm build"
+    "lint": "eslint . --cache --max-warnings=0"
   },
   "dependencies": {
-    "jest-diff": "^29.7.0"
+    "jest-diff": "^29.7.0",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
+    "@types/mdast": "^4.0.4",
     "tsdown": "^0.11.9",
+    "unified": "^11.0.5",
     "vitest": "^3.1.3"
   },
   "peerDependencies": {
@@ -38,17 +38,18 @@
     "provenance": true
   },
   "sideEffects": false,
-  "files": [
+  "// TODO(HiDeoo) ": "// TODO(HiDeoo) ",
+  "asdasdasdfiles2": [
     "dist"
   ],
   "keywords": [
     "// TODO(HiDeoo)"
   ],
-  "homepage": "https://github.com/HiDeoo/expressive-code-auto-diff",
+  "homepage": "https://github.com/HiDeoo/remark-expressive-code-auto-diff",
   "repository": {
     "type": "git",
-    "url": "https://github.com/HiDeoo/expressive-code-auto-diff.git",
-    "directory": "packages/expressive-code-auto-diff"
+    "url": "https://github.com/HiDeoo/remark-expressive-code-auto-diff.git",
+    "directory": "packages/remark-expressive-code-auto-diff"
   },
-  "bugs": "https://github.com/HiDeoo/expressive-code-auto-diff/issues"
+  "bugs": "https://github.com/HiDeoo/remark-expressive-code-auto-diff/issues"
 }
