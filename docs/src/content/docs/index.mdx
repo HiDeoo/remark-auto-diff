@@ -1,0 +1,72 @@
+---
+title: // TODO(HiDeoo)
+---
+
+```js
+aaaaa
+// ---[diff]---
+bbbbb
+```
+
+// TODO(HiDeoo)
+
+```diff lang=js
+console.log('Hello, world! 1')
++..console.log('Hello, world! 1.5')
+console.log('Hello, world! 2')
+```
+
+```js title="Hello world"
+console.log('Hello, world! 1')
+console.log('Hello, world! 1.5')
+console.log('Hello, world! 2')
+// ---[diff]---
+console.log('Hello, world! 3')
+console.log('Hello, world! 1.5')
+console.log('Hello, world! 4')
+```
+
+```js
+console.log('Hello, world! 1')
+console.log('Hello, world! 1.5')
+console.log('Hello, world! 2')
+// ---[diff]---
+console.log('Hello, world! 3')
+console.log('Hello, world! 1.5')
+console.warn('Hello, world! 2')
+```
+
+```js
+console.log('Hello, world! 1')
+  console.log('Hello, world! 1.5')
+console.log('Hello, world! 2')
+// ---[diff]---
+console.log('Hello, world! 3')
+  console.log('Hello, world! 1.5')
+Totally diffferent
+```
+
+```diff
+-console.log('Hello, world! 1')
+-console.log('Hello, world! 2')
++console.log('Hello, world! 3')
++console.log('Hello, world! 4')
+```
+
+// TODO(HiDeoo) indentation
+
+// TODO(HiDeoo) multuiple marker
+
+// TODO(HiDeoo) no before
+
+// TODO(HiDeoo) no after
+
+// TODO(HiDeoo) code component
+
+// TODO(HiDeoo) real diff file
+
+// TODO(HiDeoo) empty line in the beginning
+
+// TODO(HiDeoo) empty line in the middle
+
+// TODO(HiDeoo) empty line in the end

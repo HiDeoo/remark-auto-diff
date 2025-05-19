@@ -1,15 +1,9 @@
-import {
-  definePlugin,
-  ExpressiveCodeAnnotation,
-  type AnnotationBaseOptions,
-  type AnnotationRenderOptions,
-  type ExpressiveCodeBlock,
-} from '@expressive-code/core'
-import { addClassName, type Parents } from '@expressive-code/core/hast'
-import gitDiff from 'git-diff'
+import { definePlugin, type ExpressiveCodeBlock } from '@expressive-code/core'
+
+import { AutoDiffAnnotation } from './libs/annotations'
+import { getDiff, type Diff } from './libs/diff'
 
 const autoDiffAnnotationRegex = /(---\[diff]---)/g
-const diffLineRegex = /^(?<marker>[+-](?![+-]))?\s*(?<content>.*)$/
 
 export function pluginAutoDiff() {
   return definePlugin({
@@ -18,18 +12,13 @@ export function pluginAutoDiff() {
       preprocessLanguage: ({ codeBlock }) => {
         if (!isAutoDiffCodeBlock(codeBlock)) return
 
-        // TODO(HiDeoo)
-        const language = codeBlock.language
-        codeBlock.language = 'diff'
-        // TODO(HiDeoo) existing lang
-        // TODO(HiDeoo) remove title
-        // codeBlock.meta = `lang=js title="test.js"`
+        codeBlock.props.useDiffSyntax = true
       },
       preprocessCode: ({ codeBlock }) => {
-        // TODO(HiDeoo) disable annotation
+        // TODO(HiDeoo) disable annotation ???? What did I mean?
         if (!isAutoDiffCodeBlock(codeBlock)) return
 
-        let foundAnnotation = false
+        let isAnnotated = false
         const oldLines: string[] = []
         const newLines: string[] = []
 
@@ -39,35 +28,28 @@ export function pluginAutoDiff() {
           const matches = line.text.match(autoDiffAnnotationRegex)
 
           if (!matches) {
-            if (foundAnnotation) {
-              newLines.push(line.text)
-            } else {
-              oldLines.push(line.text)
-            }
+            if (isAnnotated) newLines.push(line.text)
+            else oldLines.push(line.text)
             continue
           }
 
-          if (matches.length > 1 || foundAnnotation) {
+          if (matches.length > 1 || isAnnotated) {
             // TODO(HiDeoo) Improve error
             // TODO(HiDeoo) mention marker to disable
             throw new Error('Multiple auto-diff annotations found in the same code block.')
           }
 
-          foundAnnotation = true
+          isAnnotated = true
         }
 
-        if (!foundAnnotation) return
+        if (!isAnnotated) return
 
         codeBlock.deleteLines(Array.from({ length: lines.length }, (_, i) => i))
 
-        // TODO(HiDeoo) words?
+        const diff = getDiff(oldLines.join('\n'), newLines.join('\n'))
+        if (diff.length === 0) return
 
-        const diff = gitDiff(oldLines.join('\n'), newLines.join('\n'), { noHeaders: true, wordDiff: true })
-        if (!diff) return
-
-        console.log('🚨 [index.ts:60] diff:', diff)
-
-        insertAutoDiff(codeBlock, diff.split('\n'))
+        insertAutoDiff(codeBlock, diff)
       },
     },
   })
@@ -79,81 +61,17 @@ function isAutoDiffCodeBlock(codeBlock: ExpressiveCodeBlock) {
   return isAutoDiff
 }
 
-// TODO(HiDeoo) comment
-function insertAutoDiff(codeBlock: ExpressiveCodeBlock, diff: string[]) {
+function insertAutoDiff(codeBlock: ExpressiveCodeBlock, diff: Diff) {
   let lineIndex = 0
 
-  for (const [index, entry] of diff.entries()) {
-    if (entry === String.raw`\ No newline at end of file`) continue
-    if (!entry && index === diff.length - 1) continue
-
-    const markerType: MarkerType | undefined = entry.startsWith('+') ? 'ins' : entry.startsWith('-') ? 'del' : undefined
-    const content = markerType ? entry.slice(1) : entry
-
-    const line = codeBlock.insertLine(lineIndex++, content)
-
-    // TODO(HiDeoo) move
-    class Plop extends ExpressiveCodeAnnotation {
-      constructor(
-        options: AnnotationBaseOptions,
-        private markerType: MarkerType,
-      ) {
-        super(options)
-      }
-
-      override render({ nodesToTransform, line, lineIndex }: AnnotationRenderOptions): Parents[] {
-        return nodesToTransform.map((node, idx) => {
-          // const transformedNode = h(this.markerType, node)
-          if (node.type === 'element') {
-            addClassName(node, 'highlight')
-            addClassName(node, this.markerType)
-          }
-          return node
-
-          // if (nodesToTransform.length > 0 && idx > 0) {
-          //   addClassName(transformedNode, 'open-start')
-          // }
-          // if (nodesToTransform.length > 0 && idx < nodesToTransform.length - 1) {
-          //   addClassName(transformedNode, 'open-end')
-          // }
-          // return transformedNode
-        })
-      }
-    }
-
-    if (markerType) {
-      line.addAnnotation(
-        new Plop({}, markerType),
-        // new TextMarkerAnnotation({
-        //   markerType,
-        //   backgroundColor: cssVar(markerBgColorPaths[markerType]),
-        // }),
-      )
-    }
+  for (const diffLine of diff) {
+    const line = codeBlock.insertLine(lineIndex++, diffLine.text)
+    if (diffLine.type) line.addAnnotation(new AutoDiffAnnotation({}, diffLine.type))
   }
-
-  // const linesAndMarkers = lines.map((line) => {
-  //   const match = diffLineRegex.exec(line)
-  //   const { content = '', marker, indentation = '' } = match?.groups ?? {}
-  //   const markerType: MarkerType | undefined = marker === '+' ? 'ins' : marker === '-' ? 'del' : undefined
-
-  //   // Remember the minimum indentation of non-empty lines.
-  //   if (content.trim().length > 0 && indentation.length < minIndentation) minIndentation = indentation.length
-
-  //   return { line, markerType }
-  // })
-
-  // let lineIndex = 0
-
-  // for (const { line, markerType } of linesAndMarkers) {
-  //   const colsToRemove = minIndentation || (markerType ? 1 : 0)
-  //   if (colsToRemove > 0) line.editText(0, colsToRemove, '')
-  // }
-
-  // for (const line of lines) {
-  //   if (!line || line === String.raw`\ No newline at end of file`) continue
-  //   codeBlock.insertLine(lineIndex++, line)
-  // }
 }
 
-type MarkerType = 'ins' | 'del'
+declare module '@expressive-code/core' {
+  export interface ExpressiveCodeBlockProps {
+    useDiffSyntax?: boolean
+  }
+}
