@@ -62,9 +62,6 @@ importers:
 
   packages/remark-expressive-code-auto-diff:
     dependencies:
-      '@expressive-code/core':
-        specifier: '>=0.41.0'
-        version: 0.41.2
       jest-diff:
         specifier: ^29.7.0
         version: 29.7.0

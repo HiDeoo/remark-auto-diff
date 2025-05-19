@@ -1,77 +1,43 @@
-import { definePlugin, type ExpressiveCodeBlock } from '@expressive-code/core'
+import type { Root, Code } from 'mdast'
+import type { Plugin } from 'unified'
+import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
-import { AutoDiffAnnotation } from './libs/annotations'
-import { getDiff, type Diff } from './libs/diff'
+import { getDiff } from './libs/diff'
 
-const autoDiffAnnotationRegex = /(---\[diff]---)/g
+export const remarkExpressiveCodeAutoDiff: Plugin<[], Root> = function () {
+  return (tree) => {
+    let before: Code | undefined
 
-export function pluginAutoDiff() {
-  return definePlugin({
-    name: 'AutoDiff',
-    hooks: {
-      preprocessLanguage: ({ codeBlock }) => {
-        if (!isAutoDiffCodeBlock(codeBlock)) return
+    visit(tree, (node, index, parent) => {
+      if (index === undefined || !parent) return CONTINUE
+      if (node.type !== 'code') return CONTINUE
+      // TODO(HiDeoo) extra meta, should check if it's contained in meta, not if it's equal
+      if (node.meta !== 'auto-diff') return CONTINUE
 
-        codeBlock.props.useDiffSyntax = true
-      },
-      preprocessCode: ({ codeBlock }) => {
-        // TODO(HiDeoo) disable annotation ???? What did I mean?
-        if (!isAutoDiffCodeBlock(codeBlock)) return
+      if (!before) {
+        before = node
+        return SKIP
+      }
 
-        let isAnnotated = false
-        const oldLines: string[] = []
-        const newLines: string[] = []
+      // TODO(HiDeoo) errors (no-after-after-before, no-before-before-after)
+      // TODO(HiDeoo) remove `auto-diff` from meta
 
-        const lines = codeBlock.getLines()
+      const diff = getDiff(before.value, node.value)
 
-        for (const line of lines) {
-          const matches = line.text.match(autoDiffAnnotationRegex)
+      parent.children[index - 1] = {
+        ...before,
+        lang: 'diff',
+        // TODO(HiDeoo) handle meta
+        meta: before.meta?.replace('auto-diff', `lang=${before.lang}`),
+        value: diff
+          .map((line) => `${line.type === 'del' ? '-' : line.type === 'ins' ? '+' : ''}${line.text}`)
+          .join('\n'),
+      }
 
-          if (!matches) {
-            if (isAnnotated) newLines.push(line.text)
-            else oldLines.push(line.text)
-            continue
-          }
+      parent.children.splice(index, 1)
+      before = undefined
 
-          if (matches.length > 1 || isAnnotated) {
-            // TODO(HiDeoo) Improve error
-            // TODO(HiDeoo) mention marker to disable
-            throw new Error('Multiple auto-diff annotations found in the same code block.')
-          }
-
-          isAnnotated = true
-        }
-
-        if (!isAnnotated) return
-
-        codeBlock.deleteLines(Array.from({ length: lines.length }, (_, i) => i))
-
-        const diff = getDiff(oldLines.join('\n'), newLines.join('\n'))
-        if (diff.length === 0) return
-
-        insertAutoDiff(codeBlock, diff)
-      },
-    },
-  })
-}
-
-function isAutoDiffCodeBlock(codeBlock: ExpressiveCodeBlock) {
-  const isAutoDiff = codeBlock.code.match(autoDiffAnnotationRegex)
-  autoDiffAnnotationRegex.lastIndex = 0
-  return isAutoDiff
-}
-
-function insertAutoDiff(codeBlock: ExpressiveCodeBlock, diff: Diff) {
-  let lineIndex = 0
-
-  for (const diffLine of diff) {
-    const line = codeBlock.insertLine(lineIndex++, diffLine.text)
-    if (diffLine.type) line.addAnnotation(new AutoDiffAnnotation({}, diffLine.type))
-  }
-}
-
-declare module '@expressive-code/core' {
-  export interface ExpressiveCodeBlockProps {
-    useDiffSyntax?: boolean
+      return SKIP
+    })
   }
 }
