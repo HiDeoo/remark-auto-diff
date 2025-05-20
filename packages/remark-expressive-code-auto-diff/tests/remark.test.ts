@@ -42,6 +42,31 @@ bar
   `)
   })
 
+  test('respects indentations', async () => {
+    const md = await renderMarkdown(`\`\`\`js auto-diff
+foo(() => {
+  console.log('foo')
+})
+\`\`\`
+
+\`\`\`js auto-diff
+bar(() => {
+    console.log('bar')
+})
+\`\`\``)
+
+    expect(md).toMatchInlineSnapshot(`
+      "\`\`\`diff lang=js
+      -foo(() => {
+      -  console.log('foo')
+      +bar(() => {
+      +    console.log('bar')
+      })
+      \`\`\`
+      "
+    `)
+  })
+
   test('transforms multiple auto-diff syntax', async () => {
     const md = await renderMarkdown(`\`\`\`js auto-diff
 foo
@@ -73,6 +98,32 @@ quxx
     `)
   })
 
+  test('transforms auto-diff syntax in nested nodes', async () => {
+    const md = await renderMarkdown(`- test 1
+
+  \`\`\`js auto-diff
+  foo
+  \`\`\`
+
+  \`\`\`js auto-diff
+  bar
+  \`\`\`
+
+  - test 2`)
+
+    expect(md).toMatchInlineSnapshot(`
+      "* test 1
+
+        \`\`\`diff lang=js
+        -foo
+        +bar
+        \`\`\`
+
+        * test 2
+      "
+    `)
+  })
+
   test('transforms auto-diff syntax with other meta informations', async () => {
     const md = await renderMarkdown(`\`\`\`js title="test.js" auto-diff
 foo
@@ -89,6 +140,105 @@ bar
     \`\`\`
     "
   `)
+  })
+
+  test('uses meta informations from the before auto-diff code block in priority', async () => {
+    const md = await renderMarkdown(`\`\`\`js auto-diff title="before.js"
+foo
+\`\`\`
+
+\`\`\`js auto-diff title="after.js"
+bar
+\`\`\``)
+
+    expect(md).toMatchInlineSnapshot(`
+    "\`\`\`diff lang=js title="before.js"
+    -foo
+    +bar
+    \`\`\`
+    "
+  `)
+  })
+
+  test('fallbacks to the meta informations from the after auto-diff code block', async () => {
+    const md = await renderMarkdown(`\`\`\`js auto-diff
+foo
+\`\`\`
+
+\`\`\`js auto-diff title="test.js"
+bar
+\`\`\``)
+
+    expect(md).toMatchInlineSnapshot(`
+    "\`\`\`diff lang=js title="test.js"
+    -foo
+    +bar
+    \`\`\`
+    "
+  `)
+  })
+
+  test('transforms auto-diff syntax with no before', async () => {
+    const md = await renderMarkdown(`\`\`\`js auto-diff
+\`\`\`
+
+\`\`\`js auto-diff
+bar
+\`\`\``)
+
+    expect(md).toMatchInlineSnapshot(`
+      "\`\`\`diff lang=js
+      +bar
+      \`\`\`
+      "
+    `)
+  })
+
+  test('transforms auto-diff syntax with no after', async () => {
+    const md = await renderMarkdown(`\`\`\`js auto-diff
+foo
+\`\`\`
+
+\`\`\`js auto-diff
+\`\`\``)
+
+    expect(md).toMatchInlineSnapshot(`
+      "\`\`\`diff lang=js
+      -foo
+      \`\`\`
+      "
+    `)
+  })
+
+  test('respects empty lines in auto-diff syntax', async () => {
+    const md = await renderMarkdown(`\`\`\`js auto-diff
+
+foo
+
+bar
+
+\`\`\`
+
+\`\`\`js auto-diff
+
+baz
+
+qux
+
+\`\`\``)
+
+    expect(md).toMatchInlineSnapshot(`
+      "\`\`\`diff lang=js
+
+      -foo
+      +baz
+
+      -bar
+      +qux
+
+      \`\`\`
+      "
+    `)
   })
 })
 
@@ -115,6 +265,19 @@ bar
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node]`)
   })
 
+  test('reports an auto-diff code block not followed by another auto-diff code block at the same depth', async () => {
+    await expect(() =>
+      renderMarkdown(`- test 1
+  \`\`\`js auto-diff
+  foo
+  \`\`\`
+
+\`\`\`js auto-diff
+bar
+\`\`\``),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node but found nothing]`)
+  })
+
   test('reports an auto-diff code block not followed by any node', async () => {
     await expect(() =>
       renderMarkdown(`\`\`\`js auto-diff
@@ -122,7 +285,16 @@ foo
 \`\`\``),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node but found nothing]`)
   })
-})
 
-// TODO(HiDeoo) test in nested markdup, e.g. in a list
-// TODO(HiDeoo) test in different nested markdup, e.g. in a list child and then back at the root
+  test('reports auto-diff code blocks with different languages', async () => {
+    await expect(() =>
+      renderMarkdown(`\`\`\`js auto-diff
+foo
+\`\`\`
+
+\`\`\`ts auto-diff
+bar
+\`\`\``),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node with the same language]`)
+  })
+})

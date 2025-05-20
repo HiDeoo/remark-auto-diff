@@ -18,13 +18,17 @@ export const remarkExpressiveCodeAutoDiff: Plugin<[], Root> = function () {
       if (!nextSibling) throw new Error('Expected an auto-diff code node but found nothing')
       if (nextSibling.type !== 'code') throw new Error('Expected a code node')
       if (!isAutoDiffCodeNode(nextSibling)) throw new Error('Expected an auto-diff code node')
+      if (node.lang !== nextSibling.lang) throw new Error('Expected an auto-diff code node with the same language')
 
       const diff = getDiff(node.value, nextSibling.value)
 
       parent.children[index] = {
         ...node,
         lang: 'diff',
-        meta: node.meta?.replace('auto-diff', `lang=${node.lang}`),
+        meta: (node.meta?.replace('auto-diff', '') ? node.meta : nextSibling.meta)?.replace(
+          'auto-diff',
+          `lang=${node.lang}`,
+        ),
         value: diff
           .map((line) => `${line.type === 'del' ? '-' : line.type === 'ins' ? '+' : ''}${line.text}`)
           .join('\n'),
