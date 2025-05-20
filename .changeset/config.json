@@ -2,11 +2,11 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.4/schema.json",
   "changelog": [
     "@changesets/changelog-github",
-    { "repo": "HiDeoo/remark-expressive-code-auto-diff" }
+    { "repo": "HiDeoo/remark-auto-diff" }
   ],
   "commit": false,
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["remark-expressive-code-auto-diff-docs"]
+  "ignore": ["remark-auto-diff-docs"]
 }

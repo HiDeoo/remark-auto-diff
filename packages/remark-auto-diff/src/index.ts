@@ -4,7 +4,7 @@ import { CONTINUE, visit } from 'unist-util-visit'
 
 import { getDiff } from './libs/diff'
 
-export const remarkExpressiveCodeAutoDiff: Plugin<[], Root> = function () {
+export const remarkAutoDiff: Plugin<[], Root> = function () {
   return (tree) => {
     visit(tree, (node, index, parent) => {
       if (index === undefined || !parent) return CONTINUE

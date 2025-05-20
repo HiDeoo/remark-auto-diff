@@ -1,5 +1,5 @@
 {
-  "name": "remark-expressive-code-auto-diff",
+  "name": "remark-auto-diff",
   "version": "0.0.1",
   "license": "MIT",
   "description": "// TODO(HiDeoo)",
@@ -45,11 +45,11 @@
   "keywords": [
     "// TODO(HiDeoo)"
   ],
-  "homepage": "https://github.com/HiDeoo/remark-expressive-code-auto-diff",
+  "homepage": "https://github.com/HiDeoo/remark-auto-diff",
   "repository": {
     "type": "git",
-    "url": "https://github.com/HiDeoo/remark-expressive-code-auto-diff.git",
-    "directory": "packages/remark-expressive-code-auto-diff"
+    "url": "https://github.com/HiDeoo/remark-auto-diff.git",
+    "directory": "packages/remark-auto-diff"
   },
-  "bugs": "https://github.com/HiDeoo/remark-expressive-code-auto-diff/issues"
+  "bugs": "https://github.com/HiDeoo/remark-auto-diff/issues"
 }

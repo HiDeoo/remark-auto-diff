@@ -1,5 +1,5 @@
 ---
-'remark-expressive-code-auto-diff': minor
+'remark-auto-diff': minor
 ---
 
 Initial public release

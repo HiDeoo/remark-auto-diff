@@ -53,14 +53,14 @@ importers:
       astro:
         specifier: ^5.7.13
         version: 5.7.13(@types/node@22.15.19)(jiti@2.4.2)(rollup@4.41.0)(typescript@5.8.3)(yaml@2.8.0)
-      remark-expressive-code-auto-diff:
+      remark-auto-diff:
         specifier: workspace:*
-        version: link:../packages/remark-expressive-code-auto-diff
+        version: link:../packages/remark-auto-diff
       sharp:
         specifier: ^0.34.1
         version: 0.34.1
 
-  packages/remark-expressive-code-auto-diff:
+  packages/remark-auto-diff:
     dependencies:
       jest-diff:
         specifier: ^29.7.0
