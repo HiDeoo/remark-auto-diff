@@ -13,12 +13,10 @@ export const remarkAutoDiff: Plugin<[], Root> = function () {
 
       const nextSibling = parent.children[index + 1]
 
-      // TODO(HiDeoo) error message
-      // TODO(HiDeoo) expected X but found Y
-      if (!nextSibling) throw new Error('Expected an auto-diff code node but found nothing')
-      if (nextSibling.type !== 'code') throw new Error('Expected a code node')
-      if (!isAutoDiffCodeNode(nextSibling)) throw new Error('Expected an auto-diff code node')
-      if (node.lang !== nextSibling.lang) throw new Error('Expected an auto-diff code node with the same language')
+      if (!nextSibling || nextSibling.type !== 'code' || !isAutoDiffCodeNode(nextSibling))
+        throw new Error('Found an `auto-diff` code block not immediately followed by another `auto-diff` code block.')
+      if (node.lang !== nextSibling.lang)
+        throw new Error('Two `auto-diff` code blocks must use the same language identifier.')
 
       const diff = getDiff(node.value, nextSibling.value)
 

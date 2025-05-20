@@ -250,7 +250,9 @@ foo
 \`\`\`
 
 bar`),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected a code node]`)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Found an \`auto-diff\` code block not immediately followed by another \`auto-diff\` code block.]`,
+    )
   })
 
   test('reports an auto-diff code block not followed by another auto-diff code block', async () => {
@@ -262,7 +264,9 @@ foo
 \`\`\`js
 bar
 \`\`\``),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node]`)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Found an \`auto-diff\` code block not immediately followed by another \`auto-diff\` code block.]`,
+    )
   })
 
   test('reports an auto-diff code block not followed by another auto-diff code block at the same depth', async () => {
@@ -275,7 +279,9 @@ bar
 \`\`\`js auto-diff
 bar
 \`\`\``),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node but found nothing]`)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Found an \`auto-diff\` code block not immediately followed by another \`auto-diff\` code block.]`,
+    )
   })
 
   test('reports an auto-diff code block not followed by any node', async () => {
@@ -283,7 +289,9 @@ bar
       renderMarkdown(`\`\`\`js auto-diff
 foo
 \`\`\``),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node but found nothing]`)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Found an \`auto-diff\` code block not immediately followed by another \`auto-diff\` code block.]`,
+    )
   })
 
   test('reports auto-diff code blocks with different languages', async () => {
@@ -295,6 +303,8 @@ foo
 \`\`\`ts auto-diff
 bar
 \`\`\``),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node with the same language]`)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Two \`auto-diff\` code blocks must use the same language identifier.]`,
+    )
   })
 })
