@@ -1,4 +1,4 @@
-import type { Root, Code } from 'mdast'
+import type { Code, Root } from 'mdast'
 import type { Plugin } from 'unified'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 
@@ -9,25 +9,27 @@ export const remarkExpressiveCodeAutoDiff: Plugin<[], Root> = function () {
     let before: Code | undefined
 
     visit(tree, (node, index, parent) => {
+      if (before) {
+        // TODO(HiDeoo) error message
+        if (node.type !== 'code') throw new Error('Expected a code node')
+        // TODO(HiDeoo) error message
+        if (!isAutoDiffCodeNode(node)) throw new Error('Expected an auto-diff code node')
+      }
+
       if (index === undefined || !parent) return CONTINUE
       if (node.type !== 'code') return CONTINUE
-      // TODO(HiDeoo) extra meta, should check if it's contained in meta, not if it's equal
-      if (node.meta !== 'auto-diff') return CONTINUE
+      if (!isAutoDiffCodeNode(node)) return CONTINUE
 
       if (!before) {
         before = node
         return SKIP
       }
 
-      // TODO(HiDeoo) errors (no-after-after-before, no-before-before-after)
-      // TODO(HiDeoo) remove `auto-diff` from meta
-
       const diff = getDiff(before.value, node.value)
 
       parent.children[index - 1] = {
         ...before,
         lang: 'diff',
-        // TODO(HiDeoo) handle meta
         meta: before.meta?.replace('auto-diff', `lang=${before.lang}`),
         value: diff
           .map((line) => `${line.type === 'del' ? '-' : line.type === 'ins' ? '+' : ''}${line.text}`)
@@ -39,5 +41,14 @@ export const remarkExpressiveCodeAutoDiff: Plugin<[], Root> = function () {
 
       return SKIP
     })
+
+    if (before) {
+      // TODO(HiDeoo) error message
+      throw new Error('Expected an auto-diff code node')
+    }
   }
+}
+
+function isAutoDiffCodeNode(node: Code) {
+  return node.meta?.includes('auto-diff')
 }
