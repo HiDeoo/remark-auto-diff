@@ -42,6 +42,37 @@ bar
   `)
   })
 
+  test('transforms multiple auto-diff syntax', async () => {
+    const md = await renderMarkdown(`\`\`\`js auto-diff
+foo
+\`\`\`
+
+\`\`\`js auto-diff
+bar
+\`\`\`
+
+\`\`\`js auto-diff
+qux
+\`\`\`
+
+\`\`\`js auto-diff
+quxx
+\`\`\``)
+
+    expect(md).toMatchInlineSnapshot(`
+      "\`\`\`diff lang=js
+      -foo
+      +bar
+      \`\`\`
+
+      \`\`\`diff lang=js
+      -qux
+      +quxx
+      \`\`\`
+      "
+    `)
+  })
+
   test('transforms auto-diff syntax with other meta informations', async () => {
     const md = await renderMarkdown(`\`\`\`js title="test.js" auto-diff
 foo
@@ -89,6 +120,9 @@ bar
       renderMarkdown(`\`\`\`js auto-diff
 foo
 \`\`\``),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node]`)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Expected an auto-diff code node but found nothing]`)
   })
 })
+
+// TODO(HiDeoo) test in nested markdup, e.g. in a list
+// TODO(HiDeoo) test in different nested markdup, e.g. in a list child and then back at the root

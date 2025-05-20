@@ -1,51 +1,39 @@
 import type { Code, Root } from 'mdast'
 import type { Plugin } from 'unified'
-import { CONTINUE, SKIP, visit } from 'unist-util-visit'
+import { CONTINUE, visit } from 'unist-util-visit'
 
 import { getDiff } from './libs/diff'
 
 export const remarkExpressiveCodeAutoDiff: Plugin<[], Root> = function () {
   return (tree) => {
-    let before: Code | undefined
-
     visit(tree, (node, index, parent) => {
-      if (before) {
-        // TODO(HiDeoo) error message
-        if (node.type !== 'code') throw new Error('Expected a code node')
-        // TODO(HiDeoo) error message
-        if (!isAutoDiffCodeNode(node)) throw new Error('Expected an auto-diff code node')
-      }
-
       if (index === undefined || !parent) return CONTINUE
       if (node.type !== 'code') return CONTINUE
       if (!isAutoDiffCodeNode(node)) return CONTINUE
 
-      if (!before) {
-        before = node
-        return SKIP
-      }
+      const nextSibling = parent.children[index + 1]
 
-      const diff = getDiff(before.value, node.value)
+      // TODO(HiDeoo) error message
+      // TODO(HiDeoo) expected X but found Y
+      if (!nextSibling) throw new Error('Expected an auto-diff code node but found nothing')
+      if (nextSibling.type !== 'code') throw new Error('Expected a code node')
+      if (!isAutoDiffCodeNode(nextSibling)) throw new Error('Expected an auto-diff code node')
 
-      parent.children[index - 1] = {
-        ...before,
+      const diff = getDiff(node.value, nextSibling.value)
+
+      parent.children[index] = {
+        ...node,
         lang: 'diff',
-        meta: before.meta?.replace('auto-diff', `lang=${before.lang}`),
+        meta: node.meta?.replace('auto-diff', `lang=${node.lang}`),
         value: diff
           .map((line) => `${line.type === 'del' ? '-' : line.type === 'ins' ? '+' : ''}${line.text}`)
           .join('\n'),
       }
 
-      parent.children.splice(index, 1)
-      before = undefined
+      parent.children.splice(index + 1, 1)
 
-      return SKIP
+      return CONTINUE
     })
-
-    if (before) {
-      // TODO(HiDeoo) error message
-      throw new Error('Expected an auto-diff code node')
-    }
   }
 }
 
