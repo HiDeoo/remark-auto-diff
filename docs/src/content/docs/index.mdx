@@ -2,14 +2,171 @@
 title: // TODO(HiDeoo)
 ---
 
+```diff auto-diff title=".gitignore"
+# build output
+dist/
+```
+
+```diff auto-diff
+# build output
+public/
+```
+
+```js title="endpoint.ts" auto-diff
+export function get() {
+  return new Response(JSON.stringify({ title: "Bob's blog" }))
+}
+```
+
 ```js auto-diff
-// before
-same()
+export function GET() {
+  return new Response(JSON.stringify({ title: "Bob's blog" }))
+}
+```
+
+```js auto-diff
 app.render(request, routeData, locals)
 ```
 
 ```js auto-diff
-// after
-same()
 app.render(request, { routeData, locals })
+```
+
+```js auto-diff title="astro.config.js"
+export default defineConfig({
+  markdown: {
+    shikiConfig: {
+      langs: [{ path: '../../custom.tmLanguage.json' }],
+    },
+  },
+})
+```
+
+```js auto-diff
+import customLang from './custom.tmLanguage.json'
+
+export default defineConfig({
+  markdown: {
+    shikiConfig: {
+      langs: [customLang],
+    },
+  },
+})
+```
+
+```ts auto-diff
+export async function GET() {
+  return { body: { title: "Bob's blog" } }
+}
+```
+
+```ts auto-diff
+export async function GET() {
+  return new Response(JSON.stringify({ title: "Bob's blog" }))
+}
+```
+
+```ts auto-diff
+export async function GET() {
+  const file = await fs.readFile('./bob.png')
+  return new ResponseWithEncoding(file.toString('binary'), undefined, 'binary')
+}
+```
+
+```ts auto-diff
+export async function GET() {
+  const file = await fs.readFile('./bob.png')
+  return new Response(file.buffer)
+}
+```
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs syncKey="pkg">
+<TabItem label="npm">
+
+```shell auto-diff
+npm create astro@latest -- --template <example-name> --typescript strict
+```
+
+```shell auto-diff
+npm create astro@latest -- --template <example-name>
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```shell auto-diff
+pnpm create astro@latest --template <example-name> --typescript strict
+```
+
+```shell auto-diff
+pnpm create astro@latest --template <example-name>
+```
+
+</TabItem>
+<TabItem label="Yarn">
+
+```shell auto-diff
+yarn create astro --template <example-name> --typescript strict
+```
+
+```shell auto-diff
+yarn create astro --template <example-name>
+```
+
+</TabItem>
+</Tabs>
+
+```js auto-diff
+import { getImage } from 'astro:assets'
+import myImage from '../assets/my_image.png'
+
+const optimizedImage = await getImage(myImage)
+```
+
+```js auto-diff
+import { getImage } from 'astro:assets'
+import myImage from '../assets/my_image.png'
+
+const optimizedImage = await getImage({ src: myImage })
+```
+
+```json auto-diff title="package.json"
+{
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
+```
+
+```json auto-diff
+{
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  }
+}
+```
+
+```astro auto-diff title="src/components/GreetingHeadline.astro"
+---
+const { greeting = 'Hello', name } = Astro.props
+---
+
+<h2>{greeting}, {name}!</h2>
+```
+
+```astro auto-diff
+---
+interface Props {
+  name: string
+  greeting?: string
+}
+
+const { greeting = 'Hello', name } = Astro.props
+---
+
+<h2>{greeting}, {name}!</h2>
 ```
