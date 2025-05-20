@@ -1,0 +1,151 @@
+---
+title: // TODO(HiDeoo)
+description: // TODO(HiDeoo)
+---
+
+`remark-auto-diff` is a [remark](https://remark.js.org/) plugin providing an alternative syntax to author `diff` code blocks in Markdown syntax.
+
+## `diff` code blocks
+
+Using `diff` code blocks in Markdown syntax is very common in many projects, especially in documentation and guides.
+A fenced code block (a block with three backticks <code>```</code> at the start and end) with the [`diff` language](https://en.wikipedia.org/wiki/Diff#Unified_format) can be used to highlight changes:
+
+- Additions are prefixed with a plus sign (`+`) at the start of the line.
+- Deletions are prefixed with a minus sign (`-`) at the start of the line.
+
+````mdx frame="terminal" title="Markdown Code Editor"
+```diff
+- console.log('removed line')
++ console.log('added line')
+```
+````
+
+The above example would be rendered as:
+
+```diff
+- console.log('removed line')
++ console.log('added line')
+```
+
+I personally think this syntax has some drawbacks:
+
+- It requires the user to be familiar with the `diff` syntax.
+  I have received some feedback from users who were confused by it, wondering how the `+` and `-` signs works with indentation, etc.
+- Authors need to compute the diff manually.
+  If the user only has the “before” and “after” versions of the code, they need to compute the diff manually.
+- Updating the diff is also not straightforward as the user needs to recompute the diff manually.
+  It's impossible to just copy-paste the updated code.
+- Syntax highlighting of the code is lost.
+  The example above contains JavaScript code, but syntax highlighting for JavaScript is not used in both the editor and the rendered output.
+- Auto-formatting is not possible.
+  Code formatter which supports formatting Markdown files (like Prettier) can also format the code inside code blocks.
+  The example above contains JavaScript code, but Prettier will not format the code as such.
+
+## Expressive Code
+
+[Expressive Code](https://expressive-code.com) is an amazing code block renderer bundled with many features: themes, syntax highlighting, text markers, editor & terminal frames, and many more.
+If you are not already using it, I highly recommend you to check it out.
+
+When it comes to `diff` code blocks, Expressive Code has done a great job at improving the experience of authoring and rendering them to the limit of what is possible for a code block renderer.
+
+### Syntax Highlighting
+
+Expressive Code supports [syntax highlighting in `diff` code blocks](https://expressive-code.com/key-features/text-markers/#combining-syntax-highlighting-with-diff-like-syntax).
+A second language identifier can be specified in the opening code fence to enable syntax highlighting.
+
+The following example uses the `lang="js"` attribute after the opening code fence to specify that the code inside the `diff` code block is JavaScript code:
+
+````md frame="terminal" title="Markdown Code Editor"
+```diff lang="js"
+- console.log('removed line')
++ console.log('added line')
+```
+````
+
+The above example would be rendered with syntax highlighting as:
+
+```diff lang="js"
+- console.log('removed line')
++ console.log('added line')
+```
+
+Unfortunately, as awesome as the feature is, syntax highlighting will only be visible in the rendered output.
+When editing the Markdown file, the JavaScript code will not be highlighted as such as visible in the first code example.
+
+### Line markers
+
+Expressive Code also supports [line markers](https://expressive-code.com/key-features/text-markers/#selecting-line-marker-types-mark-ins-del).
+Instead of using the `+` and `-` signs of the `diff` syntax, users can use the `ins` and `del` markers to highlight added and removed lines by specifying line numbers in the opening code fence.
+
+The following example uses the `ins={1}` to specify that the first line is an addition and `del={2}` to specify that the second line is a deletion:
+
+````md frame="terminal" title="Markdown Code Editor"
+```js ins={1} del={2}
+console.log('removed line')
+console.log('added line')
+```
+````
+
+The above example would be rendered with changes highlighted as expected:
+
+```js ins={1} del={2}
+console.log('removed line')
+console.log('added line')
+```
+
+This syntax improves on many points I mentioned previously:
+
+- The user does not need to be familiar with the `diff` syntax and deal with the `+` and `-` signs.
+- Syntax highlighting is respected in both the editor and the rendered output.
+- Auto-formatting is possible as the code is using the `js` language identifier and does not contain any `+` or `-` signs.
+
+Although this syntax is much better than the `diff` syntax, I personally think it still has some drawbacks:
+
+- Authors need to compute the diff manually.
+- Authors need to compute line numbers manually to specify the `ins` and `del` markers.
+- Updating the diff is also not straightforward as the user needs to recompute the diff manually and update the line numbers.
+
+## `remark-auto-diff`
+
+`remark-auto-diff` uses a different approach to author `diff` code blocks in Markdown syntax.
+Two code blocks are used to specify the “before” and “after” versions of the code and the plugin will compute the diff automatically.
+
+Considering the following example:
+
+````mdx frame="terminal" title="Markdown Code Editor"
+```diff
+- console.log('removed line')
++ console.log('added line')
+```
+````
+
+When using `remark-auto-diff`, a first code block is used to specify the “before” version of the code immediately followed by a second code block to specify the “after” version of the code.
+The `auto-diff` attribute is added to the opening code fence of both code blocks to specify that the plugin should compute the diff automatically.
+
+````mdx frame="terminal" title="Markdown Code Editor"
+```js auto-diff
+console.log('removed line')
+```
+
+```js auto-diff
+console.log('added line')
+```
+````
+
+When rendered with Expressive Code, the above example would be rendered as:
+
+```js auto-diff
+console.log('removed line')
+```
+
+```js auto-diff
+console.log('added line')
+```
+
+While being more verbose, this syntax improves on many points I mentioned previously:
+
+- The user does not need to be familiar with the `diff` syntax and deal with the `+` and `-` signs or the `ins` and `del` markers from Expressive Code.
+- Authors do not need to compute the diff manually.
+- Updating the “before” or “after” code is straightforward as the user can just copy-paste the updated code.
+- Syntax highlighting is respected in both the editor and the rendered output as both code blocks are using the `js` language identifier.
+- Auto-formatting is possible as both code blocks are using the `js` language identifier and do not contain any `+` or `-` signs.
