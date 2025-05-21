@@ -1,236 +1,64 @@
 ---
-title: // TODO(HiDeoo)
+title: remark-auto-diff
+description: A remark plugin providing an alternative syntax to author diff code blocks in Markdown.
+head:
+  - tag: title
+    content: remark-auto-diff
+  - tag: style
+    content: |
+      .hero-html {
+        --size: 12rem;
+        font-size: var(--size);
+        justify-content: center;
+        line-height: var(--size);
+      }
+template: splash
+editUrl: false
+lastUpdated: false
+hero:
+  tagline: A remark plugin providing an alternative syntax to author diff code blocks in Markdown.
+  image:
+    html: '🔍'
+  actions:
+    - text: Get started
+      link: /getting-started/
+      icon: rocket
+    - text: Demo
+      link: /demo/
+      icon: right-arrow
+      variant: minimal
 ---
 
-// TODO(HiDeoo) code component
+import { Preview } from '@hideoo/starlight-plugins-docs-components'
 
-## Astro
+<Preview>
 
-```diff auto-diff title=".gitignore"
-# build output
-dist/
+{/* prettier-ignore-start */}
+````md frame="terminal" title="Markdown Code Editor" {"First code block with the “before” version of the code.":3-6} {"Second code block with the “after” version of the code.":8-11}
+My Markdown content.
+
+
+```js auto-diff
+console.log('removed line')
 ```
 
-```diff auto-diff
-# build output
-public/
-```
 
-```js title="endpoint.ts" auto-diff
-export function get() {
-  return new Response(JSON.stringify({ title: "Bob's blog" }))
-}
+```js auto-diff
+console.log('added line')
+```
+````
+{/* prettier-ignore-end */}
+
+<Fragment slot="preview">
+
+```js auto-diff
+console.log('removed line')
 ```
 
 ```js auto-diff
-export function GET() {
-  return new Response(JSON.stringify({ title: "Bob's blog" }))
-}
+console.log('added line')
 ```
 
-```js auto-diff
-app.render(request, routeData, locals)
-```
+</Fragment>
 
-```js auto-diff
-app.render(request, { routeData, locals })
-```
-
-```js auto-diff title="astro.config.js"
-export default defineConfig({
-  markdown: {
-    shikiConfig: {
-      langs: [{ path: '../../custom.tmLanguage.json' }],
-    },
-  },
-})
-```
-
-```js auto-diff
-import customLang from './custom.tmLanguage.json'
-
-export default defineConfig({
-  markdown: {
-    shikiConfig: {
-      langs: [customLang],
-    },
-  },
-})
-```
-
-```ts auto-diff
-export async function GET() {
-  return { body: { title: "Bob's blog" } }
-}
-```
-
-```ts auto-diff
-export async function GET() {
-  return new Response(JSON.stringify({ title: "Bob's blog" }))
-}
-```
-
-```ts auto-diff
-export async function GET() {
-  const file = await fs.readFile('./bob.png')
-  return new ResponseWithEncoding(file.toString('binary'), undefined, 'binary')
-}
-```
-
-```ts auto-diff
-export async function GET() {
-  const file = await fs.readFile('./bob.png')
-  return new Response(file.buffer)
-}
-```
-
-import { Tabs, TabItem } from '@astrojs/starlight/components'
-
-<Tabs syncKey="pkg">
-<TabItem label="npm">
-
-```shell auto-diff
-npm create astro@latest -- --template <example-name> --typescript strict
-```
-
-```shell auto-diff
-npm create astro@latest -- --template <example-name>
-```
-
-</TabItem>
-<TabItem label="pnpm">
-
-```shell auto-diff
-pnpm create astro@latest --template <example-name> --typescript strict
-```
-
-```shell auto-diff
-pnpm create astro@latest --template <example-name>
-```
-
-</TabItem>
-<TabItem label="Yarn">
-
-```shell auto-diff
-yarn create astro --template <example-name> --typescript strict
-```
-
-```shell auto-diff
-yarn create astro --template <example-name>
-```
-
-</TabItem>
-</Tabs>
-
-```js auto-diff
-import { getImage } from 'astro:assets'
-import myImage from '../assets/my_image.png'
-
-const optimizedImage = await getImage(myImage)
-```
-
-```js auto-diff
-import { getImage } from 'astro:assets'
-import myImage from '../assets/my_image.png'
-
-const optimizedImage = await getImage({ src: myImage })
-```
-
-```json auto-diff title="package.json"
-{
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
-}
-```
-
-```json auto-diff
-{
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
-  }
-}
-```
-
-```astro auto-diff title="src/components/GreetingHeadline.astro"
----
-const { greeting = 'Hello', name } = Astro.props
----
-
-<h2>{greeting}, {name}!</h2>
-```
-
-```astro auto-diff
----
-interface Props {
-  name: string
-  greeting?: string
-}
-
-const { greeting = 'Hello', name } = Astro.props
----
-
-<h2>{greeting}, {name}!</h2>
-```
-
-## Starlight
-
-```js auto-diff
-// astro.config.mjs
-import { defineConfig } from 'astro/config'
-import starlight from '@astrojs/starlight'
-
-export default defineConfig({
-  integrations: [
-    starlight({
-      title: 'Docs With Custom CSS',
-      customCss: [],
-    }),
-  ],
-})
-```
-
-```js auto-diff
-// astro.config.mjs
-import { defineConfig } from 'astro/config'
-import starlight from '@astrojs/starlight'
-
-export default defineConfig({
-  integrations: [
-    starlight({
-      title: 'Docs With Custom CSS',
-      customCss: [
-        // Relative path to your custom CSS file
-        './src/styles/custom.css',
-      ],
-    }),
-  ],
-})
-```
-
-// TODO(HiDeoo) extra highlighting `docs/src/content/docs/guides/i18n.mdx`
-
-```js auto-diff
-// src/content.config.ts
-import { defineCollection } from 'astro:content'
-import { docsLoader } from '@astrojs/starlight/loaders'
-import { docsSchema } from '@astrojs/starlight/schema'
-
-export const collections = {
-  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
-}
-```
-
-```js auto-diff
-// src/content.config.ts
-import { defineCollection } from 'astro:content'
-import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders'
-import { docsSchema, i18nSchema } from '@astrojs/starlight/schema'
-
-export const collections = {
-  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
-  i18n: defineCollection({ loader: i18nLoader(), schema: i18nSchema() }),
-}
-```
+</Preview>

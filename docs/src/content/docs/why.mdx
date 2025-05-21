@@ -1,14 +1,14 @@
 ---
-title: // TODO(HiDeoo)
-description: // TODO(HiDeoo)
+title: Why a new syntax?
+description: Learn about some of the drawbacks of classic diff code blocks and how remark-auto-diff tries to solve them.
 ---
 
-`remark-auto-diff` is a [remark](https://remark.js.org/) plugin providing an alternative syntax to author `diff` code blocks in Markdown syntax.
+`remark-auto-diff` is a [remark](https://remark.js.org/) plugin providing an alternative syntax to author `diff` code blocks in Markdown.
 
 ## `diff` code blocks
 
-Using `diff` code blocks in Markdown syntax is very common in many projects, especially in documentation and guides.
-A fenced code block (a block with three backticks <code>```</code> at the start and end) with the [`diff` language](https://en.wikipedia.org/wiki/Diff#Unified_format) can be used to highlight changes:
+Using `diff` code blocks in Markdown is very common in many projects, especially in documentation and guides.
+A fenced code block (a block with three backticks <code>```</code> at the start and end) using the [`diff` language](https://en.wikipedia.org/wiki/Diff#Unified_format) can be used to highlight changes:
 
 - Additions are prefixed with a plus sign (`+`) at the start of the line.
 - Deletions are prefixed with a minus sign (`-`) at the start of the line.
@@ -32,7 +32,7 @@ I personally think this syntax has some drawbacks:
 - It requires the user to be familiar with the `diff` syntax.
   I have received some feedback from users who were confused by it, wondering how the `+` and `-` signs works with indentation, etc.
 - Authors need to compute the diff manually.
-  If the user only has the “before” and “after” versions of the code, they need to compute the diff manually.
+  If the user only has the “before” and “after” versions of the code, they need to manually write the diff between the two versions.
 - Updating the diff is also not straightforward as the user needs to recompute the diff manually.
   It's impossible to just copy-paste the updated code.
 - Syntax highlighting of the code is lost.
@@ -107,8 +107,8 @@ Although this syntax is much better than the `diff` syntax, I personally think i
 
 ## `remark-auto-diff`
 
-`remark-auto-diff` uses a different approach to author `diff` code blocks in Markdown syntax.
-Two code blocks are used to specify the “before” and “after” versions of the code and the plugin will compute the diff automatically.
+`remark-auto-diff` uses a different approach to author `diff` code blocks in Markdown.
+Two adjacent code blocks are used to specify the “before” and “after” versions of the code and the plugin will compute the diff automatically.
 
 Considering the following example:
 
@@ -122,6 +122,8 @@ Considering the following example:
 When using `remark-auto-diff`, a first code block is used to specify the “before” version of the code immediately followed by a second code block to specify the “after” version of the code.
 The `auto-diff` attribute is added to the opening code fence of both code blocks to specify that the plugin should compute the diff automatically.
 
+The above example can be rewritten as:
+
 ````mdx frame="terminal" title="Markdown Code Editor"
 ```js auto-diff
 console.log('removed line')
@@ -132,7 +134,7 @@ console.log('added line')
 ```
 ````
 
-When rendered with Expressive Code, the above example would be rendered as:
+When rendered by Expressive Code, the above example would be rendered as:
 
 ```js auto-diff
 console.log('removed line')
@@ -146,6 +148,7 @@ While being more verbose, this syntax improves on many points I mentioned previo
 
 - The user does not need to be familiar with the `diff` syntax and deal with the `+` and `-` signs or the `ins` and `del` markers from Expressive Code.
 - Authors do not need to compute the diff manually.
+  Spotting code issues is also easier as the user can just look at the “before” and “after” code blocks without any extra diff syntax.
 - Updating the “before” or “after” code is straightforward as the user can just copy-paste the updated code.
 - Syntax highlighting is respected in both the editor and the rendered output as both code blocks are using the `js` language identifier.
 - Auto-formatting is possible as both code blocks are using the `js` language identifier and do not contain any `+` or `-` signs.
