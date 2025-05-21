@@ -13,9 +13,13 @@
   <br />
 </div>
 
-## Getting Started
+## Documentation
 
-Want to get started immediately? Check out the [getting started guide](https://remark-auto-diff.netlify.app/getting-started/) or check out the various [examples](https://remark-auto-diff.netlify.app/demo/) to see the plugin in action.
+Run the docs locally using [pnpm](https://pnpm.io):
+
+```shell
+pnpm run dev
+```
 
 ## License
 
