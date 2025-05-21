@@ -1,0 +1,64 @@
+---
+title: remark-auto-diff
+description: A remark plugin providing an alternative syntax to author diff code blocks in Markdown.
+head:
+  - tag: title
+    content: remark-auto-diff
+  - tag: style
+    content: |
+      .hero-html {
+        --size: 12rem;
+        font-size: var(--size);
+        justify-content: center;
+        line-height: var(--size);
+      }
+template: splash
+editUrl: false
+lastUpdated: false
+hero:
+  tagline: A remark plugin providing an alternative syntax to author diff code blocks in Markdown.
+  image:
+    html: '🔍'
+  actions:
+    - text: Get started
+      link: /getting-started/
+      icon: rocket
+    - text: Demo
+      link: /demo/
+      icon: right-arrow
+      variant: minimal
+---
+
+import { Preview } from '@hideoo/starlight-plugins-docs-components'
+
+<Preview>
+
+{/* prettier-ignore-start */}
+````md frame="terminal" title="Markdown Code Editor" {"First code block with the “before” version of the code.":3-6} {"Second code block with the “after” version of the code.":8-11}
+My Markdown content.
+
+
+```js auto-diff
+console.log('removed line')
+```
+
+
+```js auto-diff
+console.log('added line')
+```
+````
+{/* prettier-ignore-end */}
+
+<Fragment slot="preview">
+
+```js auto-diff
+console.log('removed line')
+```
+
+```js auto-diff
+console.log('added line')
+```
+
+</Fragment>
+
+</Preview>

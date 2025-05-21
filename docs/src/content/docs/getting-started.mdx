@@ -1,0 +1,127 @@
+---
+title: Getting Started
+description: Learn how to use the remark-auto-diff plugin in your project.
+---
+
+A [remark](https://remark.js.org/) plugin providing an alternative syntax to author `diff` code blocks in Markdown.
+
+To learn more about some of the drawbacks of classic `diff` code blocks and how `remark-auto-diff` tries to solve them, check out the [“Why a new syntax?” page](/why/).
+
+## Installation
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components'
+import { PackageManagers } from '@hideoo/starlight-plugins-docs-components'
+
+<Steps>
+
+1. Install `remark-auto-diff` using your favorite package manager:
+
+   <PackageManagers pkg="remark-auto-diff" />
+
+2. The plugin can be used in any project using [remark](https://remark.js.org/) including [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/).
+
+   <Tabs syncKey="remark-auto-diff-install">
+
+   <TabItem label="Starlight">
+
+   Add the plugin in your Astro configuration in the `astro.config.mjs` file.
+
+   ```js title="astro.config.mjs" {4,12-14}
+   // @ts-check
+   import starlight from '@astrojs/starlight'
+   import { defineConfig } from 'astro/config'
+   import { remarkAutoDiff } from 'remark-auto-diff'
+
+   export default defineConfig({
+     integrations: [
+       starlight({
+         title: 'My Docs',
+       }),
+     ],
+     markdown: {
+       remarkPlugins: [remarkAutoDiff],
+     },
+   })
+   ```
+
+   </TabItem>
+
+   <TabItem label="Astro">
+
+   Add the plugin in your Astro configuration in the `astro.config.mjs` file.
+
+   ```js title="astro.config.mjs" {3,6-8}
+   // @ts-check
+   import { defineConfig } from 'astro/config'
+   import { remarkAutoDiff } from 'remark-auto-diff'
+
+   export default defineConfig({
+     markdown: {
+       remarkPlugins: [remarkAutoDiff],
+     },
+   })
+   ```
+
+   </TabItem>
+
+   <TabItem label="remark">
+
+   You can use the `remark-auto-diff` plugin by adding it to your `remark` pipeline.
+
+   ```js title="markdown.js" {2} ".use(remarkAutoDiff)"
+   import { remark } from 'remark'
+   import { remarkAutoDiff } from 'remark-auto-diff'
+
+   const file = await remark().use(remarkAutoDiff).process('Your markdown here')
+
+   console.log(String(file))
+   ```
+
+   </TabItem>
+
+   </Tabs>
+
+</Steps>
+
+## Usage
+
+When using the `remark-auto-diff` plugin, a first code block is used to specify the “before” version of the code immediately followed by a second code block to specify the “after” version of the code.
+The `auto-diff` attribute is added to the opening code fence of both code blocks to specify that the plugin should compute the diff automatically.
+
+{/* prettier-ignore-start */}
+````mdx frame="terminal" title="Markdown Code Editor" {"First code block with the “before” version of the code.":3-6} {"Second code block with the “after” version of the code.":8-11}
+My Markdown content.
+
+
+```js auto-diff
+console.log('removed line')
+```
+
+
+```js auto-diff
+console.log('added line')
+```
+
+`````
+{/* prettier-ignore-end */}
+
+The above example will automatically be transformed by the plugin to:
+
+````md
+My Markdown content.
+
+```diff lang=js
+- console.log('removed line')
++ console.log('added line')
+```
+````
+
+When rendered by [Expressive Code](https://expressive-code.com/), the above example would be rendered as:
+
+```js auto-diff
+console.log('removed line')
+```
+
+```js auto-diff
+console.log('added line')
+```

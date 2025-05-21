@@ -1,1 +1,1 @@
-# expressive-code-auto-diff
+packages/expressive-code-auto-diff/README.md
