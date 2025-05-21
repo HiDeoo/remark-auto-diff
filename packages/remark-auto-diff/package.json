@@ -2,7 +2,7 @@
   "name": "remark-auto-diff",
   "version": "0.0.1",
   "license": "MIT",
-  "description": "// TODO(HiDeoo)",
+  "description": "A remark plugin providing an alternative syntax to author diff code blocks in Markdown.",
   "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
   "type": "module",
   "main": "./dist/index.js",
@@ -43,7 +43,10 @@
     "dist"
   ],
   "keywords": [
-    "// TODO(HiDeoo)"
+    "markdown",
+    "remark",
+    "plugin",
+    "diff"
   ],
   "homepage": "https://github.com/HiDeoo/remark-auto-diff",
   "repository": {
