@@ -33,6 +33,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build package
+        run: pnpm build
+        working-directory: packages/remark-auto-diff
+
+      - name: Generates docs TypeScript types
+        run: pnpm astro sync
+        working-directory: docs
+
       - name: Lint
         run: pnpm lint
 
