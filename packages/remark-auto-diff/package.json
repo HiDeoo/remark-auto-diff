@@ -1,6 +1,6 @@
 {
   "name": "remark-auto-diff",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "A remark plugin providing an alternative syntax to author diff code blocks in Markdown.",
   "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
