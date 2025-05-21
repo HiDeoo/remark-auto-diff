@@ -1,1 +1,1 @@
-packages/expressive-code-auto-diff/README.md
+packages/remark-auto-diff/README.md
