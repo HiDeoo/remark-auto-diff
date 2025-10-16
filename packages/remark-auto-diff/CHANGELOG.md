@@ -1,5 +1,11 @@
 # remark-auto-diff
 
+## 0.1.1
+
+### Patch Changes
+
+- [#3](https://github.com/HiDeoo/remark-auto-diff/pull/3) [`93df405`](https://github.com/HiDeoo/remark-auto-diff/commit/93df405980fc1da2339eac4ab0e093235964ccf6) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Setups trusted publishing using OpenID Connect (OIDC) authentication — no code changes.
+
 ## 0.1.0
 
 ### Minor Changes
